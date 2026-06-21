@@ -23,6 +23,9 @@ if __name__=='__main__':
 
 @app.route("/")
 def home():
-    return{
-        "message" : "Handover Backend Running Successfully"
+    return {
+        "message": "Handover Backend Running Successfully"
     }
+
+if __name__ == "__main__":
+    app.run(debug=True)
