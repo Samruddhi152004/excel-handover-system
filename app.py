@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_cors import CORS
 from config import Config
 from models.handover import db
@@ -18,14 +18,11 @@ app.register_blueprint(records_bp,url_prefix='/api')
 app.register_blueprint(dashboard_bp,url_prefix='/api')
 app.register_blueprint(export_bp,url_prefix='/api')
 
-if __name__=='__main__':
-    app.run(debug=True)
+
 
 @app.route("/")
 def home():
-    return {
-        "message": "Handover Backend Running Successfully"
-    }
+    return render_template("index.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

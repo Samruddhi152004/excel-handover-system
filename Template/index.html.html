@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel List Handover Record</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#1d4ed8;--blue-d:#1e3a8a;--blue-l:#3b82f6;--blue-p:#eff6ff;--blue-b:#bfdbfe;
+  --green:#059669;--green-bg:#d1fae5;--green-tx:#065f46;
+  --bg:#f0f4ff;--white:#fff;
+  --tx:#0f172a;--tx-m:#334155;--tx-l:#64748b;
+  --bdr:#e2e8f0;--sh:0 2px 8px rgba(0,0,0,.08);--sh-m:0 6px 20px rgba(0,0,0,.13);
+  --r:12px;--rs:8px;
+}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;}
+/* ── HEADER ── */
+.hdr{background:linear-gradient(135deg,#1e3a8a 0%,#1d4ed8 55%,#3b82f6 100%);position:sticky;top:0;z-index:100;box-shadow:0 4px 22px rgba(30,58,138,.38);}
+.hdr-in{max-width:1400px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.hdr-brand{display:flex;align-items:center;gap:12px;min-width:0;}
+.hdr-logo{width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;}
+.hdr-title h1{color:#fff;font-size:1.15rem;font-weight:700;letter-spacing:-.02em;white-space:nowrap;}
+.hdr-title p{color:rgba(255,255,255,.72);font-size:.71rem;margin-top:2px;}
+.hdr-btns{display:flex;gap:7px;flex-shrink:0;}
+.hbtn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.28);padding:7px 13px;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:500;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:5px;white-space:nowrap;}
+.hbtn:hover{background:rgba(255,255,255,.25);}
+.hbtn.red{background:rgba(239,68,68,.18);border-color:rgba(239,68,68,.38);}
+.hbtn.red:hover{background:rgba(239,68,68,.3);}
+/* ── MAIN ── */
+.main{max-width:1400px;margin:0 auto;padding:22px 24px;}
+/* ── STAT CARDS ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat{background:var(--white);border-radius:var(--r);padding:18px 20px;box-shadow:var(--sh);border:1px solid var(--bdr);transition:.2s;cursor:default;}
+.stat:hover{transform:translateY(-2px);box-shadow:var(--sh-m);}
+.s-ico{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:21px;margin-bottom:12px;}
+.ib{background:var(--blue-p);}.ig{background:#d1fae5;}.io{background:#fff7ed;}.iv{background:#f5f3ff;}
+.s-val{font-size:2rem;font-weight:800;line-height:1;color:var(--tx);}
+.s-lbl{font-size:.76rem;color:var(--tx-l);font-weight:500;margin-top:4px;}
+/* ── BOX ── */
+.box{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--bdr);margin-bottom:20px;overflow:hidden;}
+.box-hd{padding:14px 20px;border-bottom:1px solid var(--bdr);background:#fafbff;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.box-ttl{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:7px;}
+.box-body{padding:20px;}
+/* ── FORM GRID ── */
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+.fg.s2{grid-column:span 2;}
+.fg.full{grid-column:1/-1;}
+.fg label{font-size:.78rem;font-weight:600;color:var(--tx-m);}
+.fg input,.fg select,.fg textarea{width:100%;padding:9px 13px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:.855rem;color:var(--tx);background:var(--white);outline:none;transition:.18s;appearance:auto;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue-l);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+.fg textarea{resize:vertical;min-height:72px;}
+.fa{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
+/* ── BUTTONS ── */
+.btn{padding:9px 18px;border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:.855rem;font-weight:600;cursor:pointer;border:none;transition:.18s;display:inline-flex;align-items:center;gap:6px;line-height:1;}
+.btn-p{background:var(--blue);color:#fff;}
+.btn-p:hover{background:var(--blue-d);box-shadow:0 4px 14px rgba(29,78,216,.3);transform:translateY(-1px);}
+.btn-s{background:var(--bg);color:var(--tx-m);border:1.5px solid var(--bdr);}
+.btn-s:hover{background:var(--bdr);}
+.btn-d{background:#fee2e2;color:#dc2626;}
+.btn-d:hover{background:#fecaca;}
+/* ── FILTER BAR ── */
+.fbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.srch{position:relative;flex:1;min-width:180px;}
+.srch-ico{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--tx-l);pointer-events:none;}
+.srch input{padding-left:35px;}
+.fsel{min-width:130px;flex-shrink:0;padding:9px 13px;border:1.5px solid var(--bdr);border-radius:var(--rs);font-family:'Outfit',sans-serif;font-size:.855rem;color:var(--tx);background:var(--white);outline:none;transition:.18s;cursor:pointer;}
+.fsel:focus{border-color:var(--blue-l);box-shadow:0 0 0 3px rgba(59,130,246,.15);}
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:var(--rs);}
+table{width:100%;border-collapse:collapse;font-size:.82rem;}
+thead th{background:var(--blue-d);color:#fff;padding:11px 13px;text-align:left;font-weight:600;font-size:.76rem;letter-spacing:.03em;white-space:nowrap;}
+thead th:first-child{border-radius:8px 0 0 0;}
+thead th:last-child{border-radius:0 8px 0 0;}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .12s;}
+tbody tr:hover{background:var(--blue-p);}
+tbody tr:last-child{border-bottom:none;}
+td{padding:11px 13px;color:var(--tx-m);vertical-align:middle;}
+.td-sr{color:var(--tx-l);font-weight:600;font-size:.75rem;}
+.td-name{font-weight:700;color:var(--tx);}
+.td-tr{max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:.73rem;font-weight:600;white-space:nowrap;}
+.b-sent{background:#dbeafe;color:#1e40af;}
+.b-comp{background:var(--green-bg);color:var(--green-tx);}
+.b-meth{background:#f1f5f9;color:var(--tx-m);font-size:.71rem;padding:3px 8px;}
+/* ── ACTION BTNS ── */
+.acts{display:flex;gap:5px;}
+.ba{width:30px;height:30px;border-radius:6px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:.18s;}
+.ba-e{background:#dbeafe;color:#1d4ed8;}
+.ba-e:hover{background:var(--blue-b);}
+.ba-d{background:#fee2e2;color:#dc2626;}
+.ba-d:hover{background:#fecaca;}
+/* ── EMPTY ── */
+.empty{text-align:center;padding:54px 20px;color:var(--tx-l);}
+.e-ico{font-size:46px;margin-bottom:10px;}
+.empty h3{font-size:.95rem;font-weight:600;color:var(--tx-m);margin-bottom:5px;}
+.empty p{font-size:.82rem;}
+/* ── MOBILE CARDS ── */
+.m-cards{display:none;flex-direction:column;gap:10px;}
+.rc{background:var(--white);border-radius:var(--r);border:1px solid var(--bdr);box-shadow:var(--sh);overflow:hidden;}
+.rc-hd{background:var(--blue-p);border-bottom:1px solid var(--blue-b);padding:11px 15px;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.rc-left{min-width:0;}
+.rc-name{font-weight:700;font-size:.88rem;color:var(--tx);word-break:break-word;}
+.rc-sr{font-size:.7rem;color:var(--tx-l);margin-top:2px;}
+.rc-body{padding:12px 15px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rf{display:flex;flex-direction:column;gap:2px;}
+.rf-lbl{font-size:.67rem;font-weight:700;color:var(--tx-l);text-transform:uppercase;letter-spacing:.06em;}
+.rf-val{font-size:.8rem;color:var(--tx);font-weight:500;}
+.rc-ft{padding:9px 15px;border-top:1px solid var(--bdr);display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.rc-rem{font-size:.75rem;color:var(--tx-l);font-style:italic;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ── FAB ── */
+.fab{display:none;position:fixed;bottom:22px;right:22px;width:54px;height:54px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:26px;cursor:pointer;box-shadow:0 4px 18px rgba(29,78,216,.45);align-items:center;justify-content:center;z-index:150;transition:.2s;line-height:1;}
+.fab:hover{background:var(--blue-d);transform:scale(1.06);}
+/* ── MODAL ── */
+.mo{position:fixed;inset:0;background:rgba(15,23,42,.62);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;visibility:hidden;transition:all .25s;}
+.mo.on{opacity:1;visibility:visible;}
+.mo-box{background:var(--white);border-radius:var(--r);padding:24px;width:100%;max-width:700px;max-height:92vh;overflow-y:auto;box-shadow:var(--sh-m);transform:scale(.96) translateY(8px);transition:transform .25s;}
+.mo.on .mo-box{transform:scale(1) translateY(0);}
+.mo-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.mo-ttl{font-size:1.05rem;font-weight:700;}
+.mo-cls{width:30px;height:30px;border-radius:7px;border:1.5px solid var(--bdr);background:var(--white);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;color:var(--tx-l);transition:.18s;flex-shrink:0;}
+.mo-cls:hover{background:#fee2e2;color:#dc2626;border-color:#fecaca;}
+.mo-sm{max-width:390px;text-align:center;}
+.cf-ico{font-size:46px;margin-bottom:10px;}
+.cf-ttl{font-size:1.05rem;font-weight:700;margin-bottom:7px;}
+.cf-txt{font-size:.84rem;color:var(--tx-l);margin-bottom:20px;line-height:1.5;}
+.cf-acts{display:flex;gap:8px;justify-content:center;}
+/* ── TOAST ── */
+.toast-c{position:fixed;top:72px;right:20px;z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none;}
+.tst{background:var(--white);border-radius:var(--rs);padding:11px 15px;box-shadow:var(--sh-m);border-left:4px solid var(--blue);font-size:.84rem;font-weight:500;display:flex;align-items:center;gap:7px;animation:tsi .3s ease,tso .3s ease 2.7s forwards;min-width:220px;max-width:300px;}
+.tst.ok{border-color:var(--green);}
+.tst.err{border-color:#dc2626;}
+@keyframes tsi{from{transform:translateX(110%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+@keyframes tso{from{transform:translateX(0);opacity:1;}to{transform:translateX(110%);opacity:0;}}
+/* ── REC COUNT ── */
+.rec-cnt{font-size:.78rem;color:var(--tx-l);}
+/* ── DATE BADGE ── */
+.date-badge{background:#f1f5f9;color:var(--tx-m);font-size:.76rem;padding:2px 8px;border-radius:5px;white-space:nowrap;}
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.fgrid{grid-template-columns:repeat(2,1fr);}.fg.s2{grid-column:span 2;}}
+@media(max-width:900px){.stats{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){
+  .main{padding:14px 16px;}
+  .hdr-in{padding:11px 16px;}
+  .hdr-title h1{font-size:.95rem;}
+  .hdr-title p{display:none;}
+  .hbtn .txt{display:none;}
+  .stats{grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;}
+  .stat{padding:14px;}
+  .s-val{font-size:1.6rem;}
+  .add-form-box{display:none!important;}
+  .tbl-wrap{display:none;}
+  .m-cards{display:flex;}
+  .fab{display:flex;}
+  .fbar{gap:8px;}
+  .box-body{padding:14px;}
+  .mo-box{padding:18px;}
+}
+@media(max-width:540px){.rc-body{grid-template-columns:1fr;}.fgrid{grid-template-columns:1fr!important;}.fg.s2,.fg.full{grid-column:auto;}}
+@media(max-width:380px){.hdr-logo{width:34px;height:34px;font-size:17px;}.hdr-title h1{font-size:.85rem;}.hbtn{padding:6px 9px;font-size:.74rem;}.s-val{font-size:1.4rem;}}
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:#f1f5f9;border-radius:10px;}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-brand">
+      <div class="hdr-logo">📊</div>
+      <div class="hdr-title">
+        <h1>Excel List Handover Record</h1>
+        <p>Track &amp; Manage Excel File Handovers</p>
+      </div>
+    </div>
+    <div class="hdr-btns">
+      <button class="hbtn" onclick="toggleForm()" id="addBtn">➕ <span class="txt">Add Record</span></button>
+      <button class="hbtn" onclick="exportCSV()">📥 <span class="txt">Export CSV</span></button>
+      <button class="hbtn red" onclick="openModal('moClear')">🗑️ <span class="txt">Clear All</span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main class="main">
+
+  <!-- STAT CARDS -->
+  <div class="stats">
+    <div class="stat">
+      <div class="s-ico ib">📁</div>
+      <div class="s-val" id="cTotal">0</div>
+      <div class="s-lbl">Total Files Handed Over</div>
+    </div>
+    <div class="stat">
+      <div class="s-ico iv">👥</div>
+      <div class="s-val" id="cPersons">0</div>
+      <div class="s-lbl">Total Persons Assigned</div>
+    </div>
+    <div class="stat">
+      <div class="s-ico io">📤</div>
+      <div class="s-val" id="cSent">0</div>
+      <div class="s-lbl">Sent Records</div>
+    </div>
+    <div class="stat">
+      <div class="s-ico ig">✅</div>
+      <div class="s-val" id="cDone">0</div>
+      <div class="s-lbl">Completed Records</div>
+    </div>
+  </div>
+
+  <!-- ADD FORM BOX (Desktop) -->
+  <div class="box add-form-box" id="formBox" style="display:none;">
+    <div class="box-hd">
+      <div class="box-ttl">➕ Add New Handover Record</div>
+      <button class="btn btn-s" onclick="toggleForm()" style="padding:5px 11px;font-size:.78rem;">✕ Close</button>
+    </div>
+    <div class="box-body">
+      <form id="addForm" onsubmit="submitAdd(event)" novalidate>
+        <div class="fgrid">
+          <div class="fg s2">
+            <label>📄 Excel File Name <span style="color:#dc2626">*</span></label>
+            <input type="text" id="aFileName" placeholder="e.g. Retail_NorthZone_June2025.xlsx" required>
+          </div>
+          <div class="fg">
+            <label>🏢 Sector / Business Type <span style="color:#dc2626">*</span></label>
+            <input type="text" id="aSector" placeholder="e.g. Retail, Healthcare, FMCG" required>
+          </div>
+          <div class="fg">
+            <label>📍 Area Covered <span style="color:#dc2626">*</span></label>
+            <input type="text" id="aArea" placeholder="e.g. North Zone, City A, Block 5" required>
+          </div>
+          <div class="fg">
+            <label>👤 Handover To <span style="color:#dc2626">*</span></label>
+            <input type="text" id="aHandoverTo" placeholder="Person's full name" required>
+          </div>
+          <div class="fg">
+            <label>💼 Person Role / Team</label>
+            <input type="text" id="aRole" placeholder="e.g. Sales Manager, Field Team A">
+          </div>
+          <div class="fg">
+            <label>📅 Date of Excel Sent <span style="color:#dc2626">*</span></label>
+            <input type="date" id="aDate" required>
+          </div>
+          <div class="fg">
+            <label>📨 Sent Through <span style="color:#dc2626">*</span></label>
+            <select id="aSentVia" required>
+              <option value="">— Select Method —</option>
+              <option value="WhatsApp">📱 WhatsApp</option>
+              <option value="Email">📧 Email</option>
+              <option value="Drive Link">☁️ Drive Link</option>
+              <option value="Physical Copy">📋 Physical Copy</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>🔖 Status <span style="color:#dc2626">*</span></label>
+            <select id="aStatus" required>
+              <option value="">— Select Status —</option>
+              <option value="Sent">Sent</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div class="fg full">
+            <label>📝 Remarks</label>
+            <textarea id="aRemarks" placeholder="Any additional notes or instructions..."></textarea>
+          </div>
+        </div>
+        <div class="fa">
+          <button type="button" class="btn btn-s" onclick="resetAdd()">🔄 Reset</button>
+          <button type="submit" class="btn btn-p">💾 Save Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- RECORDS BOX -->
+  <div class="box">
+    <div class="box-hd">
+      <div class="box-ttl">📋 Handover Records</div>
+      <span class="rec-cnt" id="recCount">0 records</span>
+    </div>
+    <div class="box-body">
+
+      <!-- FILTER BAR -->
+      <div class="fbar">
+        <div class="srch">
+          <span class="srch-ico">🔍</span>
+          <input type="text" id="srchInput" placeholder="Search by file name, area, sector, or person name…" oninput="doFilter()">
+        </div>
+        <select class="fsel" id="stFilter" onchange="doFilter()">
+          <option value="All">All Status</option>
+          <option value="Sent">Sent</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+
+      <!-- DESKTOP TABLE -->
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sr.</th>
+              <th>Excel File Name</th>
+              <th>Sector / Business</th>
+              <th>Area Covered</th>
+              <th>Handover To</th>
+              <th>Role / Team</th>
+              <th>Date Sent</th>
+              <th>Sent Through</th>
+              <th>Status</th>
+              <th>Remarks</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tBody"></tbody>
+        </table>
+      </div>
+
+      <!-- MOBILE CARDS -->
+      <div class="m-cards" id="mCards"></div>
+
+      <!-- EMPTY STATE -->
+      <div class="empty" id="emptyState" style="display:none;">
+        <div class="e-ico">📭</div>
+        <h3 id="emptyTitle">No Records Found</h3>
+        <p id="emptyMsg">Add a new handover record to get started.</p>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<!-- FAB (Mobile Only) -->
+<button class="fab" onclick="openAddModal()" title="Add New Record">+</button>
+
+<!-- ═══════════════ ADD / EDIT MODAL ═══════════════ -->
+<div class="mo" id="moForm">
+  <div class="mo-box">
+    <div class="mo-hd">
+      <div class="mo-ttl" id="moFormTitle">➕ Add New Record</div>
+      <button class="mo-cls" onclick="closeModal('moForm')" aria-label="Close">✕</button>
+    </div>
+    <form id="moFormEl" onsubmit="submitModal(event)" novalidate>
+      <input type="hidden" id="moId">
+      <div class="fgrid" style="grid-template-columns:repeat(2,1fr);">
+        <div class="fg full">
+          <label>📄 Excel File Name <span style="color:#dc2626">*</span></label>
+          <input type="text" id="mFileName" placeholder="e.g. Retail_NorthZone_June2025.xlsx" required>
+        </div>
+        <div class="fg">
+          <label>🏢 Sector / Business Type <span style="color:#dc2626">*</span></label>
+          <input type="text" id="mSector" placeholder="e.g. Retail, Healthcare" required>
+        </div>
+        <div class="fg">
+          <label>📍 Area Covered <span style="color:#dc2626">*</span></label>
+          <input type="text" id="mArea" placeholder="e.g. North Zone, City A" required>
+        </div>
+        <div class="fg">
+          <label>👤 Handover To <span style="color:#dc2626">*</span></label>
+          <input type="text" id="mHandoverTo" placeholder="Person's full name" required>
+        </div>
+        <div class="fg">
+          <label>💼 Person Role / Team</label>
+          <input type="text" id="mRole" placeholder="e.g. Sales Manager, Field Team">
+        </div>
+        <div class="fg">
+          <label>📅 Date of Excel Sent <span style="color:#dc2626">*</span></label>
+          <input type="date" id="mDate" required>
+        </div>
+        <div class="fg">
+          <label>📨 Sent Through <span style="color:#dc2626">*</span></label>
+          <select id="mSentVia" required>
+            <option value="">— Select Method —</option>
+            <option value="WhatsApp">📱 WhatsApp</option>
+            <option value="Email">📧 Email</option>
+            <option value="Drive Link">☁️ Drive Link</option>
+            <option value="Physical Copy">📋 Physical Copy</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>🔖 Status <span style="color:#dc2626">*</span></label>
+          <select id="mStatus" required>
+            <option value="">— Select Status —</option>
+            <option value="Sent">Sent</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div class="fg full">
+          <label>📝 Remarks</label>
+          <textarea id="mRemarks" placeholder="Any additional notes or instructions..."></textarea>
+        </div>
+      </div>
+      <div class="fa" style="margin-top:14px;">
+        <button type="button" class="btn btn-s" onclick="closeModal('moForm')">Cancel</button>
+        <button type="submit" class="btn btn-p" id="moSubmitBtn">💾 Save Record</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="mo" id="moDel">
+  <div class="mo-box mo-sm">
+    <div class="cf-ico">🗑️</div>
+    <div class="cf-ttl">Delete This Record?</div>
+    <div class="cf-txt">This action is permanent and cannot be undone. The record will be removed from the system.</div>
+    <div class="cf-acts">
+      <button class="btn btn-s" onclick="closeModal('moDel')">Cancel</button>
+      <button class="btn btn-d" onclick="doDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLEAR ALL CONFIRM MODAL -->
+<div class="mo" id="moClear">
+  <div class="mo-box mo-sm">
+    <div class="cf-ico">⚠️</div>
+    <div class="cf-ttl">Clear All Records?</div>
+    <div class="cf-txt">This will permanently delete <strong>all</strong> handover records stored in this system. This action cannot be undone.</div>
+    <div class="cf-acts">
+      <button class="btn btn-s" onclick="closeModal('moClear')">Cancel</button>
+      <button class="btn btn-d" onclick="doClear()">Yes, Clear All</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-c" id="toastC"></div>
+
+<!-- ═══════════════ SCRIPT ═══════════════ -->
+<script>
+// ─── DATA STORE ───────────────────────────────────────────
+let records = [];
+let deleteTarget = null;
+let editMode = false;
+
+// ─── INIT ─────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  records = JSON.parse(localStorage.getItem('handoverRecords') || '[]');
+  setTodayDates();
+  render();
+  // Close modal on backdrop click
+  document.querySelectorAll('.mo').forEach(mo => {
+    mo.addEventListener('click', e => { if (e.target === mo) closeModal(mo.id); });
+  });
+  // Close modal on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') document.querySelectorAll('.mo.on').forEach(m => closeModal(m.id));
+  });
+});
+
+function setTodayDates() {
+  const today = new Date().toISOString().split('T')[0];
+  ['aDate','mDate'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = today;
+  });
+}
+
+// ─── PERSIST ──────────────────────────────────────────────
+function save() {
+  localStorage.setItem('handoverRecords', JSON.stringify(records));
+}
+
+// ─── RENDER ───────────────────────────────────────────────
+function render() {
+  const q = (document.getElementById('srchInput')?.value || '').toLowerCase().trim();
+  const st = document.getElementById('stFilter')?.value || 'All';
+  const filtered = records.filter(r => {
+    const matchQ = !q || [r.fileName,r.sector,r.area,r.handoverTo,r.role].some(f => f.toLowerCase().includes(q));
+    const matchSt = st === 'All' || r.status === st;
+    return matchQ && matchSt;
+  });
+  renderTable(filtered);
+  renderCards(filtered);
+  updateStats();
+  updateCount(filtered.length, records.length);
+  const empty = document.getElementById('emptyState');
+  if (filtered.length === 0) {
+    empty.style.display = 'block';
+    if (records.length === 0) {
+      document.getElementById('emptyTitle').textContent = 'No Records Yet';
+      document.getElementById('emptyMsg').textContent = 'Click "Add Record" or the + button to add your first handover record.';
+    } else {
+      document.getElementById('emptyTitle').textContent = 'No Matching Records';
+      document.getElementById('emptyMsg').textContent = 'Try adjusting your search terms or status filter.';
+    }
+  } else {
+    empty.style.display = 'none';
+  }
+}
+
+function renderTable(list) {
+  const tb = document.getElementById('tBody');
+  if (!tb) return;
+  tb.innerHTML = list.length === 0 ? '' : list.map((r, i) => `
+    <tr>
+      <td class="td-sr">${i + 1}</td>
+      <td class="td-name td-tr" title="${esc(r.fileName)}" style="max-width:150px;">${esc(r.fileName)}</td>
+      <td class="td-tr" title="${esc(r.sector)}">${esc(r.sector)}</td>
+      <td class="td-tr" title="${esc(r.area)}">${esc(r.area)}</td>
+      <td style="font-weight:600;white-space:nowrap;">${esc(r.handoverTo)}</td>
+      <td class="td-tr" title="${esc(r.role)}">${esc(r.role) || dash()}</td>
+      <td><span class="date-badge">${fmtDate(r.date)}</span></td>
+      <td><span class="badge b-meth">${sentIcon(r.sentVia)} ${esc(r.sentVia)}</span></td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="td-tr" title="${esc(r.remarks)}" style="max-width:130px;font-size:.78rem;color:var(--tx-l);">${esc(r.remarks) || dash()}</td>
+      <td>
+        <div class="acts">
+          <button class="ba ba-e" onclick="openEdit('${r.id}')" title="Edit Record">✏️</button>
+          <button class="ba ba-d" onclick="openDelete('${r.id}')" title="Delete Record">🗑️</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderCards(list) {
+  const mc = document.getElementById('mCards');
+  if (!mc) return;
+  mc.innerHTML = list.length === 0 ? '' : list.map((r, i) => `
+    <div class="rc">
+      <div class="rc-hd">
+        <div class="rc-left">
+          <div class="rc-name">${esc(r.fileName)}</div>
+          <div class="rc-sr">#${i + 1} &nbsp;·&nbsp; ${fmtDate(r.date)}</div>
+        </div>
+        ${statusBadge(r.status)}
+      </div>
+      <div class="rc-body">
+        <div class="rf">
+          <div class="rf-lbl">🏢 Sector</div>
+          <div class="rf-val">${esc(r.sector)}</div>
+        </div>
+        <div class="rf">
+          <div class="rf-lbl">📍 Area</div>
+          <div class="rf-val">${esc(r.area)}</div>
+        </div>
+        <div class="rf">
+          <div class="rf-lbl">👤 Handover To</div>
+          <div class="rf-val">${esc(r.handoverTo)}</div>
+        </div>
+        <div class="rf">
+          <div class="rf-lbl">💼 Role / Team</div>
+          <div class="rf-val">${esc(r.role) || '—'}</div>
+        </div>
+        <div class="rf">
+          <div class="rf-lbl">📨 Sent Via</div>
+          <div class="rf-val">${sentIcon(r.sentVia)} ${esc(r.sentVia)}</div>
+        </div>
+      </div>
+      <div class="rc-ft">
+        <div class="rc-rem">${r.remarks ? '💬 ' + esc(r.remarks) : '<span style="color:#cbd5e1;">No remarks</span>'}</div>
+        <div class="acts">
+          <button class="ba ba-e" onclick="openEdit('${r.id}')" title="Edit">✏️</button>
+          <button class="ba ba-d" onclick="openDelete('${r.id}')" title="Delete">🗑️</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function updateStats() {
+  document.getElementById('cTotal').textContent = records.length;
+  const uniqPersons = new Set(records.map(r => r.handoverTo.trim().toLowerCase())).size;
+  document.getElementById('cPersons').textContent = uniqPersons;
+  document.getElementById('cSent').textContent = records.filter(r => r.status === 'Sent').length;
+  document.getElementById('cDone').textContent = records.filter(r => r.status === 'Completed').length;
+}
+
+function updateCount(n, total) {
+  const el = document.getElementById('recCount');
+  if (!el) return;
+  el.textContent = n === total
+    ? `${n} record${n !== 1 ? 's' : ''}`
+    : `${n} of ${total} record${total !== 1 ? 's' : ''}`;
+}
+
+// ─── FILTER ───────────────────────────────────────────────
+function doFilter() { render(); }
+
+// ─── DESKTOP TOGGLE FORM ──────────────────────────────────
+function toggleForm() {
+  const box = document.getElementById('formBox');
+  const btn = document.getElementById('addBtn');
+  const isHidden = box.style.display === 'none' || !box.style.display;
+  if (isHidden) {
+    box.style.display = 'block';
+    btn.innerHTML = '✕ <span class="txt">Close Form</span>';
+    setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  } else {
+    box.style.display = 'none';
+    btn.innerHTML = '➕ <span class="txt">Add Record</span>';
+  }
+}
+
+function resetAdd() {
+  document.getElementById('addForm').reset();
+  document.getElementById('aDate').value = new Date().toISOString().split('T')[0];
+}
+
+// ─── ADD (Desktop Form) ───────────────────────────────────
+function submitAdd(e) {
+  e.preventDefault();
+  const f = e.target;
+  if (!validateForm('a')) return;
+  const rec = buildRecord({
+    fileName: document.getElementById('aFileName').value.trim(),
+    sector:   document.getElementById('aSector').value.trim(),
+    area:     document.getElementById('aArea').value.trim(),
+    handoverTo: document.getElementById('aHandoverTo').value.trim(),
+    role:     document.getElementById('aRole').value.trim(),
+    date:     document.getElementById('aDate').value,
+    sentVia:  document.getElementById('aSentVia').value,
+    status:   document.getElementById('aStatus').value,
+    remarks:  document.getElementById('aRemarks').value.trim()
+  });
+  records.unshift(rec);
+  save();
+  resetAdd();
+  render();
+  toast('✅ Record added successfully!', 'ok');
+  document.querySelector('.box:last-of-type')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── ADD MODAL (Mobile) ───────────────────────────────────
+function openAddModal() {
+  editMode = false;
+  document.getElementById('moId').value = '';
+  document.getElementById('moFormTitle').textContent = '➕ Add New Record';
+  document.getElementById('moSubmitBtn').textContent = '💾 Save Record';
+  document.getElementById('moFormEl').reset();
+  document.getElementById('mDate').value = new Date().toISOString().split('T')[0];
+  openModal('moForm');
+}
+
+// ─── EDIT ─────────────────────────────────────────────────
+function openEdit(id) {
+  const r = records.find(x => x.id === id);
+  if (!r) return;
+  editMode = true;
+  document.getElementById('moId').value = id;
+  document.getElementById('moFormTitle').textContent = '✏️ Edit Record';
+  document.getElementById('moSubmitBtn').textContent = '💾 Update Record';
+  document.getElementById('mFileName').value   = r.fileName;
+  document.getElementById('mSector').value     = r.sector;
+  document.getElementById('mArea').value       = r.area;
+  document.getElementById('mHandoverTo').value = r.handoverTo;
+  document.getElementById('mRole').value       = r.role;
+  document.getElementById('mDate').value       = r.date;
+  document.getElementById('mSentVia').value    = r.sentVia;
+  document.getElementById('mStatus').value     = r.status;
+  document.getElementById('mRemarks').value    = r.remarks;
+  openModal('moForm');
+}
+
+function submitModal(e) {
+  e.preventDefault();
+  if (!validateForm('m')) return;
+  const id = document.getElementById('moId').value;
+  const data = {
+    fileName:   document.getElementById('mFileName').value.trim(),
+    sector:     document.getElementById('mSector').value.trim(),
+    area:       document.getElementById('mArea').value.trim(),
+    handoverTo: document.getElementById('mHandoverTo').value.trim(),
+    role:       document.getElementById('mRole').value.trim(),
+    date:       document.getElementById('mDate').value,
+    sentVia:    document.getElementById('mSentVia').value,
+    status:     document.getElementById('mStatus').value,
+    remarks:    document.getElementById('mRemarks').value.trim()
+  };
+  if (editMode && id) {
+    const idx = records.findIndex(x => x.id === id);
+    if (idx !== -1) { records[idx] = { ...records[idx], ...data }; toast('✏️ Record updated successfully!', 'ok'); }
+  } else {
+    records.unshift(buildRecord(data));
+    toast('✅ Record added successfully!', 'ok');
+  }
+  save(); render(); closeModal('moForm');
+}
+
+// ─── DELETE ───────────────────────────────────────────────
+function openDelete(id) { deleteTarget = id; openModal('moDel'); }
+
+function doDelete() {
+  if (!deleteTarget) return;
+  records = records.filter(r => r.id !== deleteTarget);
+  deleteTarget = null;
+  save(); render(); closeModal('moDel');
+  toast('🗑️ Record deleted.', 'err');
+}
+
+// ─── CLEAR ALL ────────────────────────────────────────────
+function doClear() {
+  records = [];
+  save(); render(); closeModal('moClear');
+  toast('🗑️ All records cleared.', 'err');
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────
+function exportCSV() {
+  if (records.length === 0) { toast('⚠️ No records to export.', 'err'); return; }
+  const headers = ['Sr.','Excel File Name','Sector / Business','Area Covered','Handover To','Role / Team','Date Sent','Sent Through','Status','Remarks'];
+  const rows = records.map((r, i) => [
+    i + 1, r.fileName, r.sector, r.area, r.handoverTo, r.role, r.date, r.sentVia, r.status, r.remarks
+  ]);
+  const csv = [headers, ...rows].map(row =>
+    row.map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(',')
+  ).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+  a.download = `Excel_Handover_Records_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  toast('📥 CSV exported successfully!', 'ok');
+}
+
+// ─── MODAL HELPERS ────────────────────────────────────────
+function openModal(id) {
+  document.getElementById(id).classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+// ─── VALIDATION ───────────────────────────────────────────
+function validateForm(prefix) {
+  const required = ['FileName','Sector','Area','HandoverTo','Date','SentVia','Status'];
+  const ids = required.map(f => prefix + f);
+  let valid = true;
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (!el.value.trim()) {
+      el.style.borderColor = '#dc2626';
+      el.style.boxShadow = '0 0 0 3px rgba(220,38,38,.15)';
+      setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 2500);
+      valid = false;
+    }
+  });
+  if (!valid) toast('⚠️ Please fill in all required fields.', 'err');
+  return valid;
+}
+
+// ─── UTILITY ──────────────────────────────────────────────
+function buildRecord(data) {
+  return { id: genId(), createdAt: Date.now(), ...data };
+}
+
+function statusBadge(s) {
+  if (s === 'Sent')      return `<span class="badge b-sent">🔵 Sent</span>`;
+  if (s === 'Completed') return `<span class="badge b-comp">✅ Completed</span>`;
+  return `<span class="badge">${esc(s)}</span>`;
+}
+
+function sentIcon(v) {
+  return { WhatsApp:'📱', Email:'📧', 'Drive Link':'☁️', 'Physical Copy':'📋' }[v] || '📎';
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  try {
+    const dt = new Date(d + 'T00:00:00');
+    return dt.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  } catch { return d; }
+}
+
+function esc(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function dash() { return '<span style="color:#cbd5e1;font-size:.8rem;">—</span>'; }
+
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+function toast(msg, type = '') {
+  const c = document.getElementById('toastC');
+  if (!c) return;
+  const t = document.createElement('div');
+  t.className = `tst ${type}`;
+  t.textContent = msg;
+  c.appendChild(t);
+  setTimeout(() => { try { t.remove(); } catch{} }, 3200);
+}
+</script>
+</body>
+</html>
